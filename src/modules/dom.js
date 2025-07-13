@@ -1,3 +1,5 @@
+import {format} from "date-fns";
+
 export const showAddProjectForm = () => {
     document.getElementById('addProjectFormContainer').style.display = 'flex';
 };
@@ -81,24 +83,29 @@ export const renderMainContent = (project, onAddTodo, onToggleComplete, onEditTo
             <button id="addTodoBtn" class="btn-primary">Add Todo</button>
         </div>
         <div id="todosContainer">
-            ${project.todos.length === 0 ? '<p>No todos in this project</p>' : project.todos.map(todo => `
-                <div class="todo-card ${todo.priority} ${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
-                    <div class="todo-header">
-                        <h3>${todo.title}</h3>
-                        <span class="todo-due-date">${todo.dueDate}</span>
+            ${project.todos.length === 0 ? '<p>No todos in this project</p>' : project.todos.map(todo => {
+        const formattedDueDate = format(new Date(todo.dueDate), 'MMMM dd, yyyy');
+        return `
+                    <div class="todo-card ${todo.priority} ${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
+                        <div class="todo-header">
+                            <h3>${todo.title}</h3>
+                            <div class="todo-meta">
+                                <span class="todo-due-date">${formattedDueDate}</span>
+                                <span class="priority-badge priority-${todo.priority}">${todo.priority}</span>
+                            </div>
+                        </div>
+                        <p class="todo-description">${todo.description}</p>
+                        <div class="todo-actions">
+                            <label class="checkbox-container">
+                                <input type="checkbox" class="todo-checkbox" data-id="${todo.id}" ${todo.completed ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                            </label>
+                            <button class="edit-todo-btn" data-id="${todo.id}">Edit</button>
+                            <button class="delete-todo-btn" data-id="${todo.id}">Delete</button>
+                        </div>
                     </div>
-                    <div class="priority-badge priority-${todo.priority}">${todo.priority}</div>
-                    <p class="todo-description">${todo.description}</p>
-                    <div class="todo-actions">
-                        <label class="checkbox-container">
-                            <input type="checkbox" class="todo-checkbox" data-id="${todo.id}" ${todo.completed ? 'checked' : ''}>
-                            <span class="checkmark"></span>
-                        </label>
-                        <button class="edit-todo-btn" data-id="${todo.id}">Edit</button>
-                        <button class="delete-todo-btn" data-id="${todo.id}">Delete</button>
-                    </div>
-                </div>
-            `).join('')}
+                `;
+    }).join('')}
         </div>
     `;
 
