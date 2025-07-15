@@ -1,9 +1,22 @@
 import "./style.css"
-import AppState from './modules/stateManager';
-import { renderSidebar, renderMainContent, showAddProjectForm, hideAddProjectForm, showAddTodoForm, hideAddTodoForm, showEditProjectForm, hideEditProjectForm, showEditTodoForm, hideEditTodoForm } from './modules/dom';
-import Todo from './modules/todo';
+import AppState from "./modules/stateManager";
+import { renderSidebar, renderMainContent, showAddProjectForm, hideAddProjectForm, showAddTodoForm, hideAddTodoForm, showEditProjectForm, hideEditProjectForm, showEditTodoForm, hideEditTodoForm } from "./modules/dom";
+import { saveStateToLocalStorage, loadStateFromLocalStorage} from "./modules/storage"
+import Todo from "./modules/todo";
+import Project from "./modules/project";
 
-const state = new AppState();
+const savedData = loadStateFromLocalStorage();
+let state = new AppState();
+
+if (savedData) {
+    state.projects = savedData.projects.map(projectData => {
+        const project = new Project(projectData.name);
+        project.id = projectData.id;
+        project.todos = projectData.todos;
+        return project;
+    });
+    state.currentProjectId = savedData.currentProjectId;
+}
 
 const renderApp = () => {
     renderSidebar(
@@ -12,10 +25,12 @@ const renderApp = () => {
         showAddProjectForm,
         (projectId) => {
             state.currentProjectId = projectId;
+            saveStateToLocalStorage(state);
             renderApp();
         },
         (projectId) => {
             state.deleteProject(projectId);
+            saveStateToLocalStorage(state);
             renderApp();
         }
     );
@@ -26,6 +41,7 @@ const renderApp = () => {
         showAddTodoForm,
         (todoId) => {
             state.toggleTodoComplete(state.currentProjectId, todoId);
+            saveStateToLocalStorage(state);
             renderApp();
         },
         (todoId) => {
@@ -36,6 +52,7 @@ const renderApp = () => {
         },
         (todoId) => {
             state.deleteTodo(state.currentProjectId, todoId);
+            saveStateToLocalStorage(state);
             renderApp();
         }
     );
@@ -46,6 +63,7 @@ document.getElementById('addProjectForm').addEventListener('submit', (event) => 
     const projectName = document.getElementById('projectName').value;
     if (projectName) {
         state.addProject(projectName);
+        saveStateToLocalStorage(state);
         renderApp();
         hideAddProjectForm();
         event.target.reset();
@@ -63,6 +81,7 @@ document.getElementById('editProjectForm').addEventListener('submit', (event) =>
         const project = state.projects.find(p => p.id === projectId);
         if (project) {
             project.name = projectName;
+            saveStateToLocalStorage(state);
             renderApp();
             hideEditProjectForm();
         }
@@ -84,6 +103,7 @@ document.getElementById('addTodoForm').addEventListener('submit', (event) => {
         if (currentProject) {
             const todo = new Todo(title, description, dueDate, priority);
             currentProject.addTodo(todo);
+            saveStateToLocalStorage(state);
             renderApp();
             hideAddTodoForm();
             event.target.reset();
@@ -101,6 +121,7 @@ document.getElementById('editTodoForm').addEventListener('submit', (event) => {
 
     if (title && description && dueDate && priority) {
         state.editTodo(state.currentProjectId, todoId, { title, description, dueDate, priority });
+        saveStateToLocalStorage(state);
         renderApp();
         hideEditTodoForm();
     }
