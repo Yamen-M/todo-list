@@ -28,6 +28,7 @@ const renderApp = () => {
             saveStateToLocalStorage(state);
             renderApp();
         },
+        handleEditProject,
         (projectId) => {
             state.deleteProject(projectId);
             saveStateToLocalStorage(state);
@@ -126,6 +127,13 @@ document.getElementById('editTodoForm').addEventListener('submit', (event) => {
         hideEditTodoForm();
     }
 });
+
+const handleEditProject = (projectId) => {
+    const project = state.projects.find(p => p.id === projectId);
+    if (project) {
+        showEditProjectForm(project);
+    }
+};
 
 document.getElementById('cancelAddTodoBtn').addEventListener('click', hideAddTodoForm);
 document.getElementById('cancelAddTodo').addEventListener('click', hideAddTodoForm);

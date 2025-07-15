@@ -39,7 +39,7 @@ export const hideEditTodoForm = () => {
     document.getElementById('editTodoFormContainer').style.display = 'none';
 };
 
-export const renderSidebar = (projects, currentProjectId, onAddProject, onProjectClick, onDeleteProject) => {
+export const renderSidebar = (projects, currentProjectId, onAddProject, onProjectClick, onEditProject, onDeleteProject) => {
     const sidebarContainer = document.getElementById('sidebarContainer');
     sidebarContainer.innerHTML = `
         <div class="sidebar-header">
@@ -51,6 +51,7 @@ export const renderSidebar = (projects, currentProjectId, onAddProject, onProjec
                 <li class="project-item ${project.id === currentProjectId ? 'active' : ''}" data-id="${project.id}">
                     <span>${project.name}</span>
                     <div class="project-actions">
+                        <button class="edit-project-btn" data-id="${project.id}">Edit</button>
                         <button class="delete-project-btn" data-id="${project.id}">Delete</button>
                     </div>
                 </li>
@@ -61,7 +62,9 @@ export const renderSidebar = (projects, currentProjectId, onAddProject, onProjec
     document.getElementById('addProjectBtn').addEventListener('click', onAddProject);
     document.querySelectorAll('.project-item').forEach(item => {
         item.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-project-btn')) {
+            if (e.target.classList.contains('edit-project-btn')) {
+                onEditProject(item.getAttribute('data-id'));
+            } else if (e.target.classList.contains('delete-project-btn')) {
                 onDeleteProject(item.getAttribute('data-id'));
             } else {
                 onProjectClick(item.getAttribute('data-id'));

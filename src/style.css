@@ -144,6 +144,24 @@ body {
     transform: scale(1.05);
 }
 
+.edit-project-btn {
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #6366f1;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+    transition: all 0.2s ease;
+    margin-left: 0.5rem;
+}
+
+.edit-project-btn:hover {
+    background-color: #f8fafc;
+    border-color: #93c5fd;
+    transform: scale(1.05);
+}
+
 .main-container {
     flex: 1;
     padding: 2.5rem 3rem;
